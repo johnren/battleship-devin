@@ -8,7 +8,7 @@ Add `?seed=<number>` to the URL (for example `?seed=123`) to make the computer's
 
 ## How to play
 
-1. **Place your fleet** on "Your fleet": pick a ship (Carrier 5, Battleship 4, Cruiser 3, Submarine 3, Destroyer 2), hover to preview (green = valid, red = invalid), click to place. Rotate with the **Rotate** button, **R**, or **Space**. On touch screens, tap once to preview and tap the same cell again to place. **Randomize** places everything for you, **Reset** clears the board.
+1. **Place your fleet** on "Your fleet": pick a ship (Carrier 5, Battleship 4, Cruiser 3, Submarine 3, Destroyer 2), hover to preview (green = valid, red = invalid), click to place. Rotate with the **Rotate** button, **R**, or **Space**. On touch screens, tap once to preview and tap the same cell again to place. On touch screens cells are 44 px, so on narrow phones each grid scrolls sideways. **Randomize** places everything for you, **Reset** clears the board.
 2. **Start** unlocks once all five ships are placed.
 3. **Fire** by clicking a cell on "Enemy waters" (or Tab to it and press Enter). You always fire first; turns alternate and a hit does not earn another shot. Firing at a cell you already tried is rejected and costs nothing.
 4. The computer fires about 600 ms later. The message log and fleet status panels show what happened.

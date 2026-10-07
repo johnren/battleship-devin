@@ -46,33 +46,35 @@ export default function BoardGrid({
       <h2 className="board__heading" id={`${id}-heading`}>
         {heading}
       </h2>
-      <div
-        className="grid"
-        data-testid={id}
-        onPointerLeave={(e) => {
-          // Touch taps also emit pointer/mouse leave events after the click; only a real mouse leaving clears the preview.
-          if (e.pointerType === 'mouse') onCellHover?.(null)
-        }}
-      >
-        <span className="grid__label" aria-hidden="true" />
-        {COL_LABELS.map((l) => (
-          <span key={l} className="grid__label" aria-hidden="true">
-            {l}
-          </span>
-        ))}
-        {ROWS.map((row) => (
-          <Row
-            key={row}
-            row={row}
-            board={board}
-            showShips={showShips}
-            mode={mode}
-            preview={preview}
-            pointerType={pointerType}
-            onCellClick={onCellClick}
-            onCellHover={onCellHover}
-          />
-        ))}
+      <div className="grid-scroll">
+        <div
+          className="grid"
+          data-testid={id}
+          onPointerLeave={(e) => {
+            // Touch taps also emit pointer/mouse leave events after the click; only a real mouse leaving clears the preview.
+            if (e.pointerType === 'mouse') onCellHover?.(null)
+          }}
+        >
+          <span className="grid__label" aria-hidden="true" />
+          {COL_LABELS.map((l) => (
+            <span key={l} className="grid__label" aria-hidden="true">
+              {l}
+            </span>
+          ))}
+          {ROWS.map((row) => (
+            <Row
+              key={row}
+              row={row}
+              board={board}
+              showShips={showShips}
+              mode={mode}
+              preview={preview}
+              pointerType={pointerType}
+              onCellClick={onCellClick}
+              onCellHover={onCellHover}
+            />
+          ))}
+        </div>
       </div>
       {children}
     </section>

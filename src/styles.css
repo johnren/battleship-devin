@@ -210,6 +210,32 @@ button {
   aspect-ratio: 1;
 }
 
+/* On touch screens cells stay 44 px square; on narrow phones the grid scrolls sideways inside its board. */
+@media (pointer: coarse) {
+  .board {
+    width: auto;
+    max-width: calc(100vw - 32px);
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .grid-scroll {
+    overflow-x: auto;
+    padding: 4px;
+    margin: -4px;
+  }
+
+  .grid {
+    grid-template-columns: 24px repeat(10, 44px);
+    width: max-content;
+  }
+
+  .grid__label {
+    aspect-ratio: auto;
+    min-height: 24px;
+  }
+}
+
 .cell {
   position: relative;
   aspect-ratio: 1;

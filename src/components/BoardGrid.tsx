@@ -103,7 +103,8 @@ function Row({ row, board, showShips, mode, preview, pointerType, onCellClick, o
         const actionable = mode === 'placing' || canFire
 
         const classes = ['cell']
-        if (visibleShip) classes.push(sunk ? 'cell--sunk' : 'cell--ship')
+        // The flash animation runs once, when the class is first added to the persistent cell element.
+        if (visibleShip) classes.push(...(sunk ? ['cell--sunk', 'cell--sunk-flash'] : ['cell--ship']))
         if (inPreview) classes.push(preview?.valid ? 'cell--preview-valid' : 'cell--preview-invalid')
         if (canFire) classes.push('cell--target')
         if (mode === 'placing') classes.push('cell--placing')

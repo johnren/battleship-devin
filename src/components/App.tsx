@@ -1,11 +1,17 @@
 import { useEffect, useReducer, useState } from 'react'
+import { sameCoord } from '../game/board.ts'
 import { createInitialState, gameReducer } from '../game/game.ts'
 import { checkPlacement, isFleetComplete, shipCells, shipSize } from '../game/placement.ts'
-import { sameCoord } from '../game/board.ts'
 import type { Coord } from '../game/types.ts'
 import BoardGrid, { type InputKind, type Preview } from './BoardGrid.tsx'
+import FleetStatus from './FleetStatus.tsx'
+import GameOverDialog from './GameOverDialog.tsx'
+import MessageLog from './MessageLog.tsx'
 import PlacementControls from './PlacementControls.tsx'
 import { randomSeed, seedFromUrl } from './seed.ts'
+import TurnIndicator from './TurnIndicator.tsx'
+
+export const COMPUTER_DELAY_MS = 600
 
 const urlSeed = seedFromUrl(window.location.search)
 
@@ -14,6 +20,7 @@ export default function App() {
   const [hover, setHover] = useState<Coord | null>(null)
   const [touchPending, setTouchPending] = useState<Coord | null>(null)
   const placing = state.phase === 'placement'
+  const { phase, turn, gameId, turnId } = state
 
   useEffect(() => {
     if (!placing) return
@@ -36,13 +43,16 @@ export default function App() {
     }
   }, [placing])
 
+  useEffect(() => {
+    if (phase !== 'playing' || turn !== 'computer') return
+    const timer = window.setTimeout(() => dispatch({ type: 'COMPUTER_FIRE', gameId, turnId }), COMPUTER_DELAY_MS)
+    return () => window.clearTimeout(timer)
+  }, [phase, turn, gameId, turnId])
+
   let preview: Preview | null = null
   if (placing && hover && state.selectedShip) {
     const cells = shipCells(hover, shipSize(state.selectedShip), state.orientation)
-    preview = {
-      cells,
-      valid: checkPlacement(state.playerBoard.ships, cells) === 'ok',
-    }
+    preview = { cells, valid: checkPlacement(state.playerBoard.ships, cells) === 'ok' }
   }
 
   const onPlayerGridClick = (c: Coord, input: InputKind) => {
@@ -55,13 +65,18 @@ export default function App() {
     dispatch({ type: 'PLACE_SHIP', coord: c })
   }
 
+  const playAgain = () => {
+    setHover(null)
+    setTouchPending(null)
+    dispatch({ type: 'PLAY_AGAIN', seed: urlSeed ?? randomSeed() })
+  }
+
   return (
-    <main className="app">
+    <>
+    <main className="app" inert={phase === 'gameover'}>
       <header className="header">
         <h1 className="title">Battleship</h1>
-        <span className="turn" role="status">
-          {placing ? 'Place your fleet' : ''}
-        </span>
+        <TurnIndicator phase={phase} turn={turn} winner={state.winner} />
       </header>
 
       {placing && (
@@ -91,9 +106,32 @@ export default function App() {
             setHover(c)
             if (c === null) setTouchPending(null)
           }}
-        />
-        <BoardGrid id="enemy-board" heading="Enemy waters" board={state.computerBoard} showShips={false} mode="locked" />
+        >
+          <FleetStatus label="Your fleet status" board={state.playerBoard} showDamage />
+        </BoardGrid>
+        <BoardGrid
+          id="enemy-board"
+          heading="Enemy waters"
+          board={state.computerBoard}
+          showShips={phase === 'gameover'}
+          mode={phase === 'playing' && turn === 'player' ? 'target' : 'locked'}
+          onCellClick={(coord) => dispatch({ type: 'PLAYER_FIRE', coord })}
+        >
+          <FleetStatus label="Enemy fleet status" board={state.computerBoard} showDamage={false} />
+        </BoardGrid>
       </div>
+
+      {!placing && <MessageLog entries={state.log} />}
     </main>
+
+      {phase === 'gameover' && state.winner && (
+        <GameOverDialog
+          winner={state.winner}
+          shots={state.playerShots}
+          hits={state.playerHits}
+          onPlayAgain={playAgain}
+        />
+      )}
+    </>
   )
 }

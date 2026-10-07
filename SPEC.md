@@ -1,3 +1,4 @@
+Repo: github.com/johnren/battleship-devin. GitHub Pages is already set to deploy from GitHub Actions.
 Goal
 Build a single-player Battleship game that runs in the browser, where a human plays against a computer opponent. It must be fully playable from a public URL, well tested, and deployed from a public GitHub repo. Correctness matters more than visual polish.
 Definition of done: the live URL loads; a full game can be played to a win and to a loss; npm test, npm run lint, npm run build, and the end-to-end test all pass in CI; README and BUGS.md are complete.

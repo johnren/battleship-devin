@@ -46,7 +46,14 @@ export default function BoardGrid({
       <h2 className="board__heading" id={`${id}-heading`}>
         {heading}
       </h2>
-      <div className="grid" data-testid={id} onMouseLeave={() => onCellHover?.(null)}>
+      <div
+        className="grid"
+        data-testid={id}
+        onPointerLeave={(e) => {
+          // Touch taps also emit pointer/mouse leave events after the click; only a real mouse leaving clears the preview.
+          if (e.pointerType === 'mouse') onCellHover?.(null)
+        }}
+      >
         <span className="grid__label" aria-hidden="true" />
         {COL_LABELS.map((l) => (
           <span key={l} className="grid__label" aria-hidden="true">
@@ -118,7 +125,9 @@ function Row({ row, board, showShips, mode, preview, pointerType, onCellClick, o
             onPointerDown={(e) => {
               pointerType.current = e.pointerType
             }}
-            onMouseEnter={() => onCellHover?.(coord)}
+            onPointerEnter={(e) => {
+              if (e.pointerType === 'mouse') onCellHover?.(coord)
+            }}
             onFocus={() => onCellHover?.(coord)}
             onClick={(e) => {
               const input: InputKind =
